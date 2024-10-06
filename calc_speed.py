@@ -76,12 +76,21 @@ def calculate_speed_in_kmps(feature_distance, GSD, time_difference):
     speed = distance / time_difference
     return speed
 
+
+def checkIfSpeedIsSensible(speed):
+    if speed >6 and speed < 9:
+        listOfSpeed.append(speed)
+    else:
+        print(speed, "is not valid")
+        
+
 def calculateMeanSpeed(listOfSpeed):
     sumOfSpeed = sum(listOfSpeed)
     averageSpeed = sumOfSpeed/len(listOfSpeed)
     return averageSpeed
 
 listOfImages = [
+    #list of images in the data list
     ["photo_00154.jpg","photo_00155.jpg"],
     ["photo_0673.jpg", "photo_0674.jpg"],
     ["photo_0675.jpg", "photo_0676.jpg"],
@@ -101,6 +110,16 @@ listOfImages = [
     ["photo_1756.jpg", "photo_1757.jpg"],
     ["photo_1758.jpg", "photo_1759.jpg"],
     ["photo_1760.jpg", "photo_1761.jpg"],
+    ["photo_01929.jpg", "photo_01930.jpg"],
+    ["photo_01931.jpg", "photo_01932.jpg"],
+    ["photo_01933.jpg", "photo_01934.jpg"],
+    ["photo_01934.jpg", "photo_01935.jpg"],
+    ["photo_05515.jpg", "photo_05516.jpg"],
+    ["photo_05516.jpg", "photo_05517.jpg"],
+    ["photo_06313.jpg", "photo_06314.jpg"],
+    ["photo_07003.jpg", "photo_07004.jpg"],
+    ["photo_07004.jpg", "photo_07005.jpg"],
+    ["photo_07464.jpg", "photo_07465.jpg"],
     ]
 
 #image_1 = 'photo_07464.jpg'
@@ -120,7 +139,7 @@ for i in range(numberOfImagePair):
     average_feature_distance = calculate_mean_distance(coordinates_1, coordinates_2)
     speed = calculate_speed_in_kmps(average_feature_distance, 12648, time_difference)
     print(speed)
-    listOfSpeed.append(speed)
+    checkIfSpeedIsSensible(speed)
 #   display_matches(image_1_cv, keypoints_1, image_2_cv, keypoints_2, matches) #display matches
 
 print("average speed is ", calculateMeanSpeed(listOfSpeed))
