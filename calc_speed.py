@@ -72,12 +72,19 @@ def calculate_mean_distance(coordinates_1, coordinates_2):
 
 
 def calculate_speed_in_kmps(feature_distance, GSD, time_difference):
+    EARTHRADIUS = 6371
+    PI = math.pi
     distance = feature_distance * GSD / 100000
+    print(distance)
+    Phi = math.asin(distance/EARTHRADIUS)
+    distance  = 2*EARTHRADIUS*PI*Phi*(1/(2*PI))
     speed = distance / time_difference
     return speed
 
 
+
 def checkIfSpeedIsSensible(speed):
+    # if speed is <6 and >9, the speed would be an anomaly and won't be counted
     if speed >6 and speed < 9:
         listOfSpeed.append(speed)
     else:
@@ -87,7 +94,15 @@ def checkIfSpeedIsSensible(speed):
 def calculateMeanSpeed(listOfSpeed):
     sumOfSpeed = sum(listOfSpeed)
     averageSpeed = sumOfSpeed/len(listOfSpeed)
+    averageSpeed = round(averageSpeed, 4)
     return averageSpeed
+
+def exportResultAsFile(speed):
+    
+    resultFile = open("result.txt","x")
+    resultFile.write(str(speed)+"km/s")
+    return resultFile
+    
 
 listOfImages = [
     #list of images in the data list
@@ -133,13 +148,14 @@ listOfSpeed = []
 for i in range(numberOfImagePair):
     time_difference = get_time_difference(listOfImages[i][0], listOfImages[i][1]) #get time difference between images
     image_1_cv, image_2_cv = convert_to_cv(listOfImages[i][0], listOfImages[i][1]) #create opencfv images objects
-    keypoints_1, keypoints_2, descriptors_1, descriptors_2 = calculate_features(image_1_cv, image_2_cv, 1000) #get keypoints and descriptors
+    keypoints_1, keypoints_2, descriptors_1, descriptors_2 = calculate_features(image_1_cv, image_2_cv, 9999) #get keypoints and descriptors
     matches = calculate_matches(descriptors_1, descriptors_2) #match descriptors
     coordinates_1, coordinates_2 = find_matching_coordinates(keypoints_1, keypoints_2, matches)
     average_feature_distance = calculate_mean_distance(coordinates_1, coordinates_2)
     speed = calculate_speed_in_kmps(average_feature_distance, 12648, time_difference)
     print(speed)
-    checkIfSpeedIsSensible(speed)
-#   display_matches(image_1_cv, keypoints_1, image_2_cv, keypoints_2, matches) #display matches
+    checkIfSpeedIsSensible(speed) #this checks whether the speed calculated is actually sensible
+#    display_matches(image_1_cv, keypoints_1, image_2_cv, keypoints_2, matches) #display matches
 
 print("average speed is ", calculateMeanSpeed(listOfSpeed))
+exportResultAsFile(calculateMeanSpeed(listOfSpeed))
